@@ -90,3 +90,93 @@ Returned when required fields are missing or do not satisfy validation constrain
 #### 3. Internal Server Error (`500 Internal Server Error`)
 
 Returned if an unhandled error or database failure occurs during registration (e.g., duplicate email key violation or database connection failure).
+
+---
+
+### Login User
+
+Authenticates an existing user with email and password, returning user data and an authentication JWT token.
+
+- **URL:** `/users/login`
+- **Method:** `POST`
+- **Access / Auth Required:** Public (`No`)
+- **Content-Type:** `application/json`
+
+---
+
+### Request Body
+
+| Field      | Type     | Required | Description             | Validation Rules             |
+| :--------- | :------- | :------- | :---------------------- | :--------------------------- |
+| `email`    | `string` | **Yes**  | User's registered email | Must be a valid email format |
+| `password` | `string` | **Yes**  | User's account password | Minimum 6 characters long    |
+
+#### Example Request Body
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+---
+
+### Responses
+
+#### 1. Success (`200 OK`)
+
+Returned when email and password match an existing registered user.
+
+**Response Body:**
+
+> **Note:** The `password` field is omitted from the user object response.
+
+---
+
+#### 2. Validation Error (`400 Bad Request`)
+
+Returned when the provided fields fail validation rules.
+
+**Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "invalid-email",
+      "msg": "Invalid email",
+      "path": "email",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "value": "123",
+      "msg": "Password must be at least 6 characters long",
+      "path": "password",
+      "location": "body"
+    }
+  ]
+}
+```
+
+---
+
+#### 3. Authentication Failed (`401 Unauthorized`)
+
+Returned when email does not exist or password does not match.
+
+**Response Body:**
+
+```json
+{
+  "message": "Invalid credentials"
+}
+```
+
+---
+
+#### 4. Internal Server Error (`500 Internal Server Error`)
+
+Returned if an unexpected server error occurs during the login process.
