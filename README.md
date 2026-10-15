@@ -180,3 +180,79 @@ Returned when email does not exist or password does not match.
 #### 4. Internal Server Error (`500 Internal Server Error`)
 
 Returned if an unexpected server error occurs during the login process.
+
+---
+
+### Get User Profile
+
+Retrieves the authenticated user's profile details. Requires a valid JWT token passed either via cookies or the `Authorization` bearer header.
+
+- **URL:** `/users/profile`
+- **Method:** `GET`
+- **Access / Auth Required:** Authenticated (`Yes` - `authUser` middleware)
+- **Headers:**
+  - `Authorization`: `Bearer <token>` (Optional if cookie is present)
+  - `Cookie`: `token=<token>` (Optional if header is present)
+
+---
+
+### Responses
+
+#### 1. Success (`200 OK`)
+
+Returned when a valid, non-blacklisted token is provided.
+
+#### 2. Authentication Error (`401 Unauthorized`)
+
+Returned when no token is provided, the token has expired/is invalid, the token has been blacklisted (logged out), or the user no longer exists.
+
+**Response Body:**
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+---
+
+### Logout User
+
+Logs out the authenticated user by clearing the `token` cookie and adding the token to the database blacklist so it can no longer be used.
+
+- **URL:** `/users/logout`
+- **Method:** `GET`
+- **Access / Auth Required:** Authenticated (`Yes` - `authUser` middleware)
+- **Headers:**
+  - `Authorization`: `Bearer <token>` (Optional if cookie is present)
+  - `Cookie`: `token=<token>` (Optional if header is present)
+
+---
+
+### Responses
+
+#### 1. Success (`200 OK`)
+
+Returned when the user is logged out, the auth cookie is cleared, and the token is saved into the blacklist collection.
+
+**Response Body:**
+
+```json
+{
+  "message": "Logout successful"
+}
+```
+
+---
+
+#### 2. Authentication Error (`401 Unauthorized`)
+
+Returned when no token is present or the provided token is already invalid/blacklisted.
+
+**Response Body:**
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
