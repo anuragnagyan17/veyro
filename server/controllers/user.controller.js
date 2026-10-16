@@ -10,9 +10,11 @@ module.exports.registerUser = async (req, res, next) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    console.log(req.body);
-
     const { fullname, email, password } = req.body;
+    const isUserAlready = await userModel.findOne({ email });
+    if (isUserAlready) {
+      return res.status(400).json({ message: "User already exist" });
+    }
     const hashPassword = await userModel.hashPassword(password);
     const user = await userServices.createUser({
       firstname: fullname.firstname,
@@ -38,6 +40,7 @@ module.exports.loginUser = async (req, res, next) => {
     }
 
     const { email, password } = req.body;
+
     const user = await userModel.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
