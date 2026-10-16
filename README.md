@@ -256,3 +256,111 @@ Returned when no token is present or the provided token is already invalid/black
   "message": "Unauthorized"
 }
 ```
+
+---
+
+## Captain Endpoints
+
+### Register Captain
+
+Creates a new captain (driver) account with personal and vehicle information, hashes the password, saves captain details in MongoDB, and generates an authentication JWT token.
+
+- **URL:** `/captains/register`
+- **Method:** `POST`
+- **Access / Auth Required:** Public (`No`)
+- **Content-Type:** `application/json`
+
+---
+
+### Request Body
+
+| Field                 | Type     | Required                    | Description                               | Validation Rules                                       |
+| :-------------------- | :------- | :-------------------------- | :---------------------------------------- | :----------------------------------------------------- |
+| `fullname.firstname`  | `string` | **Yes**                     | Captain's first name                      | Minimum 3 characters long                              |
+| `fullname.lastname`   | `string` | **No** (Optional) / **Yes** | Captain's last name                       | Minimum 3 characters if provided (Schema minlength: 3) |
+| `email`               | `string` | **Yes**                     | Captain's email address                   | Must be a valid email format and unique                |
+| `password`            | `string` | **Yes**                     | Captain's account password                | Minimum 6 characters long                              |
+| `vehicle.color`       | `string` | **Yes**                     | Color of the vehicle                      | Minimum 3 characters long                              |
+| `plate`               | `string` | **Yes**                     | Vehicle registration/license plate number | Minimum 3 characters long                              |
+| `vehicle.capacity`    | `number` | **Yes**                     | Passenger seating capacity of the vehicle | Integer, minimum value 1                               |
+| `vehicle.vehicleType` | `string` | **Yes**                     | Type of the vehicle                       | Must be one of: `Car`, `Bike`, `auto`                  |
+
+#### Example Request Body
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "captain@example.com",
+  "password": "password123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "UP 12 XY 6204",
+    "capacity": 4,
+    "vehicleType": "Car"
+  }
+}
+```
+
+---
+
+### Responses
+
+#### 1. Success (`201 Created`)
+
+Returned when the captain and vehicle details are successfully validated, saved, and an auth token is generated.
+
+**Response Body:**
+
+> **Note:** The `password` field is omitted from the captain object response (`select: false`).
+
+---
+
+#### 2. Validation Error (`400 Bad Request`)
+
+Returned when required fields are missing, invalid, or do not satisfy validation constraints.
+
+**Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "invalid-email",
+      "msg": "Invalid email",
+      "path": "email",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "value": "truck",
+      "msg": "Vehicle type must be at least 1",
+      "path": "vehicle.vehicleType",
+      "location": "body"
+    }
+  ]
+}
+```
+
+---
+
+#### 3. Duplicate Captain (`400 Bad Request`)
+
+Returned when a captain with the provided email already exists.
+
+**Response Body:**
+
+```json
+{
+  "message": "Captain already exist"
+}
+```
+
+---
+
+#### 4. Internal Server Error (`500 Internal Server Error`)
+
+Returned if an unexpected server error or database failure occurs during registration.
