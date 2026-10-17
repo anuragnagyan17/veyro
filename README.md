@@ -591,3 +591,78 @@ Returned when no token is present or the provided token is already invalid/black
   "message": "Unauthorized"
 }
 ```
+
+---
+
+# Frontend Documentation
+
+The frontend client is built with **React 19**, **Vite**, **Tailwind CSS v4** (`@tailwindcss/vite`), and **React Router v7** (`react-router-dom`).
+
+---
+
+## Tech Stack & Setup
+
+- **Framework:** React 19 (`react`, `react-dom`)
+- **Bundler & Dev Server:** Vite (`@vitejs/plugin-react`)
+- **Styling:** Tailwind CSS v4 (`tailwindcss`, `@tailwindcss/vite`)
+- **Routing:** React Router DOM v7 (`react-router-dom`)
+- **Linting:** ESLint
+
+---
+
+## Routing Architecture
+
+Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/App.jsx) wrapped inside `<BrowserRouter>` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx).
+
+| Route Path | Component | Description |
+| :--- | :--- | :--- |
+| `/` | `Home` | Landing page with hero imagery, Veyro branding, and a CTA leading to login. |
+| `/login` | `UserLogin` | Sign-in page for users/passengers with email and password inputs, form state handling, and a link to captain login. |
+| `/signup` | `UserSignUp` | Registration page for new users (placeholder). |
+| `/captain-login` | `CaptainLogin` | Sign-in page for captains/drivers with email and password inputs, form state handling, and a toggle link to user login. |
+| `/captain-signup` | `CaptainSignUp` | Registration page for new captains (placeholder). |
+
+---
+
+## Pages & Components Breakdown
+
+### 1. Landing Page (`Home.jsx`)
+- **Path:** `/`
+- **Component:** [`frontend/src/pages/Home.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/Home.jsx)
+- **Features:**
+  - Full-screen background cover layout using Unsplash imagery (`bg-cover`, `bg-center`, `h-screen`).
+  - Top branding logo using `Veyro_logo.png`.
+  - Bottom call-to-action sheet featuring the `"Get started with Veyro"` headline and a full-width `"Continue"` button routing directly to `/login`.
+
+---
+
+### 2. User Login Page (`UserLogin.jsx`)
+- **Path:** `/login`
+- **Component:** [`frontend/src/pages/UserLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserLogin.jsx)
+- **Features:**
+  - Responsive column layout with top branding and bottom captain switcher.
+  - Controlled inputs for **Email** (`email`) and **Password** (`password`) via React `useState`.
+  - Form submission handler (`submitHandler`) that bundles input data into `userData` state and clears input fields on submit.
+  - Navigation links:
+    - `"Create new Account"` ➔ routes to `/signup`.
+    - `"Sign in as Captain"` (Green CTA `#10b461`) ➔ routes to `/captain-login`.
+
+---
+
+### 3. Captain Login Page (`CaptainLogin.jsx`)
+- **Path:** `/captain-login`
+- **Component:** [`frontend/src/pages/CaptainLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogin.jsx)
+- **Features:**
+  - Dedicated captain branding using `Veyro_captain_logo.png`.
+  - Controlled form inputs for captain **Email** and **Password** with localized state (`captainData`).
+  - Form submission handler (`submitHandler`) updating `captainData` state and clearing inputs upon submit.
+  - Navigation links:
+    - `"Register as a Captain"` ➔ routes to `/captain-signup`.
+    - `"Sign in as User"` (Orange CTA `#d5622d`) ➔ routes to `/login`.
+
+---
+
+### 4. Placeholder Pages
+- **User Sign Up:** [`frontend/src/pages/UserSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserSignUp.jsx) (Path: `/signup`)
+- **Captain Sign Up:** [`frontend/src/pages/CaptainSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainSignUp.jsx) (Path: `/captain-signup`)
+
