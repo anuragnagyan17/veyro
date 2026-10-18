@@ -618,9 +618,9 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 | :--- | :--- | :--- |
 | `/` | `Home` | Landing page with hero imagery, Veyro branding, and a CTA leading to login. |
 | `/login` | `UserLogin` | Sign-in page for users/passengers with email and password inputs, form state handling, and a link to captain login. |
-| `/signup` | `UserSignUp` | Registration page for new users (placeholder). |
+| `/signup` | `UserSignUp` | Full registration page for new users with first name, last name, email, password, and privacy footer. |
 | `/captain-login` | `CaptainLogin` | Sign-in page for captains/drivers with email and password inputs, form state handling, and a toggle link to user login. |
-| `/captain-signup` | `CaptainSignUp` | Registration page for new captains (placeholder). |
+| `/captain-signup` | `CaptainSignUp` | Full registration page for new captains with captain's first name, last name, email, password, and privacy footer. |
 
 ---
 
@@ -632,7 +632,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 - **Features:**
   - Full-screen background cover layout using Unsplash imagery (`bg-cover`, `bg-center`, `h-screen`).
   - Top branding logo using `Veyro_logo.png`.
-  - Bottom call-to-action sheet featuring the `"Get started with Veyro"` headline and a full-width `"Continue"` button routing directly to `/login`.
+  - Bottom call-to-action sheet with rounded top corners (`rounded-t-2xl`) featuring the `"Get started with Veyro"` headline and a full-width `"Continue"` button routing directly to `/login`.
 
 ---
 
@@ -649,7 +649,23 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ---
 
-### 3. Captain Login Page (`CaptainLogin.jsx`)
+### 3. User Sign Up Page (`UserSignUp.jsx`)
+- **Path:** `/signup`
+- **Component:** [`frontend/src/pages/UserSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserSignUp.jsx)
+- **Features:**
+  - Responsive column layout with top branding (`Veyro_logo.png`).
+  - Controlled form inputs for:
+    - **First Name** (`firstName`) and **Last Name** (`lastName`) arranged side-by-side (`w-1/2 flex gap-4`).
+    - **Email** (`email`).
+    - **Password** (`password`).
+  - Form submission handler (`submitHandler`) packaging form data as `{ fullName: { firstName, lastName }, email, password }` and resetting all input fields upon submit.
+  - Navigation links:
+    - `"Already have an account? Login here"` ➔ routes to `/login`.
+  - Legal disclaimer footer regarding Google Privacy Policy and Terms of Service.
+
+---
+
+### 4. Captain Login Page (`CaptainLogin.jsx`)
 - **Path:** `/captain-login`
 - **Component:** [`frontend/src/pages/CaptainLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogin.jsx)
 - **Features:**
@@ -662,7 +678,39 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ---
 
-### 4. Placeholder Pages
-- **User Sign Up:** [`frontend/src/pages/UserSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserSignUp.jsx) (Path: `/signup`)
-- **Captain Sign Up:** [`frontend/src/pages/CaptainSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainSignUp.jsx) (Path: `/captain-signup`)
+### 5. Captain Sign Up Page (`CaptainSignUp.jsx`)
+- **Path:** `/captain-signup`
+- **Component:** [`frontend/src/pages/CaptainSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainSignUp.jsx)
+- **Features:**
+  - Dedicated captain branding (`Veyro_captain_logo.png`).
+  - Controlled form inputs for:
+    - **Captain's Name**: `firstName` and `lastName` in a side-by-side row.
+    - **Captain's Email**: `email`.
+    - **Password**: `password`.
+  - Form submission handler (`submitHandler`) structuring state into `{ fullName: { firstName, lastName }, email, password }` and clearing inputs upon submission.
+  - Navigation links:
+    - `"Already have an account? Login here"` ➔ routes to `/captain-login`.
+  - Legal disclaimer footer for Terms of Service and Privacy.
+
+---
+
+## State Management (Context API)
+
+### User Context (`UserContext.jsx`)
+- **Location:** [`frontend/src/context/UserContext.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/context/UserContext.jsx)
+- **Provider Component:** `UserContext`
+- **Context Object:** `UserDataContext`
+- **Initial State:**
+  ```javascript
+  const [user, setUser] = useState({
+    email: "",
+    fullName: {
+      firstName: "",
+      lastName: "",
+    },
+  });
+  ```
+- **Context Value:** `[user, setUser]`
+- **Application Integration:** Wraps the entire `<BrowserRouter>` and `<App />` tree in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to make user state globally accessible across all pages and components via `useContext(UserDataContext)`.
+
 

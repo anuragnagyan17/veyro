@@ -22,7 +22,7 @@ const CaptainLogin = () => {
     <div className="p-5 flex flex-col h-screen justify-between">
       <div>
         <img
-          className="w-20 mb-2 mt-5 ml-7"
+          className="w-20 mt-3 ml-7"
           src={veyrocaptainlogo}
           alt="Veyro Logo"
         />

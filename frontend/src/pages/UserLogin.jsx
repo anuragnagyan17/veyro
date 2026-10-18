@@ -20,7 +20,7 @@ const UserLogin = () => {
   return (
     <div className="p-5 flex flex-col h-screen justify-between">
       <div>
-        <img className="w-20 mb-2 mt-5 ml-7" src={veyroLogo} alt="Veyro Logo" />
+        <img className="w-20  mt-3 ml-7" src={veyroLogo} alt="Veyro Logo" />
         <form className="p-5" onSubmit={(e) => submitHandler(e)}>
           <h3 className="text-lg text-black font-medium mb-2">
             What's your email
