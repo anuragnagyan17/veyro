@@ -619,10 +619,12 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 | `/`               | `Start`         | Landing splash screen with background cover, Veyro logo, and CTA linking to `/login`.                                    |
 | `/login`          | `UserLogin`     | User login screen with axios POST to `/users/login`, token storage in `localStorage`, and redirect to `/home`.           |
 | `/signup`         | `UserSignUp`    | User registration screen with axios POST to `/users/register`, token storage in `localStorage`, and redirect to `/home`. |
-| `/captain-login`  | `CaptainLogin`  | Sign-in page for captains/drivers with email and password inputs, form state handling, and a toggle link to user login.  |
-| `/captain-signup` | `CaptainSignUp` | Full registration page for new captains with captain's name, email, password, and privacy footer.                        |
+| `/captain-login`  | `CaptainLogin`  | Sign-in page for captains with axios POST to `/captains/login`, token storage in `localStorage`, and redirect to `/captain-home`. |
+| `/captain-signup` | `CaptainSignUp` | Full registration page for new captains with personal & vehicle info, axios POST to `/captains/register`.                 |
 | `/home`           | `Home`          | Protected user homepage wrapped with `<UserProtectWrapper>`.                                                             |
-| `/user/logout`    | `UserLogout`    | Protected logout route that calls `/users/logout`, removes token from `localStorage`, and redirects to `/login`.         |
+| `/user/logout`    | `UserLogout`    | User logout component calling `/users/logout`, clearing local token, and redirecting to `/login`.                         |
+| `/captain-home`   | `CaptainHome`   | Protected captain dashboard wrapped with `<CaptainProtectWrapper>`.                                                      |
+| `/captain/logout` | `CaptainLogout` | Captain logout component calling `/captains/logout`, clearing local token, and redirecting to `/captain-login`.           |
 
 ---
 
@@ -674,8 +676,9 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 - **Component:** [`frontend/src/pages/CaptainLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogin.jsx)
 - **Features:**
   - Dedicated captain branding using `Veyro_captain_logo.png`.
-  - Controlled form inputs for captain **Email** and **Password** with localized state (`captainData`).
-  - Form submission handler (`submitHandler`) updating `captainData` state and clearing inputs upon submit.
+  - Controlled inputs for captain **Email** and **Password**.
+  - **API Integration:** Sends `POST` request to `${VITE_BASE_URL}/captains/login`.
+  - **State & Storage Handling:** Updates `CaptainDataContext` (`setCaptain`), stores auth token in `localStorage.setItem("token", data.token)`, and navigates to `/captain-home`.
   - Navigation links:
     - `"Register as a Captain"` ➔ routes to `/captain-signup`.
     - `"Sign in as User"` (Orange CTA `#d5622d`) ➔ routes to `/login`.
@@ -688,14 +691,15 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 - **Component:** [`frontend/src/pages/CaptainSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainSignUp.jsx)
 - **Features:**
   - Dedicated captain branding (`Veyro_captain_logo.png`).
-  - Controlled form inputs for:
-    - **Captain's Name**: `firstName` and `lastName` in a side-by-side row.
+  - Controlled form inputs for captain personal and vehicle details:
+    - **Captain's Name**: `firstname` and `lastname`.
     - **Captain's Email**: `email`.
     - **Password**: `password`.
-  - Form submission handler (`submitHandler`) structuring state into `{ fullName: { firstName, lastName }, email, password }` and clearing inputs upon submission.
+    - **Vehicle Information**: `color`, `plate`, `capacity`, and `vehicleType` (Car, Bike, Auto).
+  - **API Integration:** Sends `POST` request to `${VITE_BASE_URL}/captains/register`.
+  - Stores auth token in `localStorage`, sets global captain state, and redirects to `/captain-home`.
   - Navigation links:
     - `"Already have an account? Login here"` ➔ routes to `/captain-login`.
-    - Legal disclaimer footer for Terms of Service and Privacy.
 
 ---
 
@@ -708,15 +712,36 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ---
 
-### 7. User Logout Component (`UserLogout.jsx`)
+### 7. Captain Home Page (`CaptainHome.jsx`)
+
+- **Path:** `/captain-home`
+- **Component:** [`frontend/src/pages/CaptainHome.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainHome.jsx)
+- **Access:** Protected (`CaptainProtectWrapper`)
+- **Description:** Main driver dashboard showing active availability and ride requests.
+
+---
+
+### 8. User Logout Component (`UserLogout.jsx`)
 
 - **Path:** `/user/logout`
 - **Component:** [`frontend/src/pages/UserLogout.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserLogout.jsx)
-- **Access:** Protected (`UserProtectWrapper`)
 - **Features:**
-  - Reads stored token from `localStorage.getItem("token")`.
+  - Extracts stored token from `localStorage.getItem("token")`.
   - Calls `GET ${VITE_BASE_URL}/users/logout` with Bearer token authorization header.
   - Clears `token` from `localStorage` (`localStorage.removeItem("token")`) and navigates back to `/login`.
+  - Gracefully cleans storage and redirects even if the backend returns an error.
+
+---
+
+### 9. Captain Logout Component (`CaptainLogout.jsx`)
+
+- **Path:** `/captain/logout`
+- **Component:** [`frontend/src/pages/CaptainLogout.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogout.jsx)
+- **Features:**
+  - Extracts stored token from `localStorage.getItem("token")`.
+  - Calls `GET ${VITE_BASE_URL}/captains/logout` with Bearer token authorization header.
+  - Clears `token` from `localStorage` (`localStorage.removeItem("token")`) and redirects to `/captain-login`.
+  - Handles token invalidation and fallback navigation cleanly.
 
 ---
 
@@ -725,17 +750,30 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### User Protection Wrapper (`UserProtectWrapper.jsx`)
 
 - **Location:** [`frontend/src/pages/UserProtectWrapper.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserProtectWrapper.jsx)
-- **Purpose:** Higher-order route wrapper that guards private routes from unauthenticated access.
+- **Purpose:** Higher-order route wrapper that guards user-only routes from unauthenticated access.
 - **Mechanism:**
   - Checks `localStorage.getItem("token")` inside a `useEffect` hook.
-  - If no token exists, immediately redirects user to `/login`.
-  - If token exists, renders the protected `children` components.
+  - Validates profile with the `/users/profile` endpoint.
+  - If no token exists or verification fails, redirects to `/login`.
+  - Renders child routes once authenticated.
+
+---
+
+### Captain Protection Wrapper (`CaptainProtectWrapper.jsx`)
+
+- **Location:** [`frontend/src/pages/CaptainProtectWrapper.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainProtectWrapper.jsx)
+- **Purpose:** Route wrapper guarding driver-only routes (`/captain-home`).
+- **Mechanism:**
+  - Checks `localStorage.getItem("token")`.
+  - Validates the captain token against `GET ${VITE_BASE_URL}/captains/profile`.
+  - Populates `CaptainDataContext` with current profile data.
+  - Displays loading state while verifying, and redirects unauthenticated requests to `/captain-login`.
 
 ---
 
 ## State Management (Context API)
 
-### User Context (`UserContext.jsx`)
+### 1. User Context (`UserContext.jsx`)
 
 - **Location:** [`frontend/src/context/UserContext.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/context/UserContext.jsx)
 - **Provider Component:** `UserContext`
@@ -750,5 +788,20 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
     },
   });
   ```
-- **Context Value:** `{ user, setUser }` (Object format for easy destructuring)
-- **Application Integration:** Wraps `<BrowserRouter>` and `<App />` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to make user profile state globally available across all views.
+- **Context Value:** `{ user, setUser }`
+- **Application Integration:** Wraps `<BrowserRouter>` and `<App />` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to make user state globally accessible.
+
+---
+
+### 2. Captain Context (`CaptainContext.jsx`)
+
+- **Location:** [`frontend/src/context/CaptainContext.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/context/CaptainContext.jsx)
+- **Provider Component:** `CaptainContext`
+- **Context Object:** `CaptainDataContext`
+- **State Provided:**
+  - `captain` (current captain object)
+  - `setCaptain`
+  - `isLoading` / `setIsLoading`
+  - `error` / `setError`
+  - `updateCaptain`
+- **Application Integration:** Nested inside `UserContext` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to provide global driver state throughout the application.
