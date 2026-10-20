@@ -605,6 +605,8 @@ The frontend client is built with **React 19**, **Vite**, **Tailwind CSS v4** (`
 - **Framework:** React 19 (`react`, `react-dom`)
 - **Bundler & Dev Server:** Vite (`@vitejs/plugin-react`)
 - **Styling:** Tailwind CSS v4 (`tailwindcss`, `@tailwindcss/vite`)
+- **Animations:** GSAP & `@gsap/react`
+- **Iconography:** Remix Icon (`remixicon`)
 - **Routing:** React Router DOM v7 (`react-router-dom`)
 - **Linting:** ESLint
 
@@ -612,7 +614,7 @@ The frontend client is built with **React 19**, **Vite**, **Tailwind CSS v4** (`
 
 ## Routing Architecture
 
-Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/App.jsx) wrapped inside `<BrowserRouter>` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx).
+Routing is configured in `frontend/src/App.jsx` wrapped inside `<BrowserRouter>` in `frontend/src/main.jsx`.
 
 | Route Path        | Component       | Description                                                                                                              |
 | :---------------- | :-------------- | :----------------------------------------------------------------------------------------------------------------------- |
@@ -633,7 +635,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 1. Start Page (`Start.jsx`)
 
 - **Path:** `/`
-- **Component:** [`frontend/src/pages/Start.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/Start.jsx)
+- **File:** `frontend/src/pages/Start.jsx`
 - **Features:**
   - Full-screen background cover layout using Unsplash imagery (`bg-cover`, `bg-center`, `h-screen`).
   - Top branding logo using `Veyro_logo.png`.
@@ -644,7 +646,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 2. User Login Page (`UserLogin.jsx`)
 
 - **Path:** `/login`
-- **Component:** [`frontend/src/pages/UserLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserLogin.jsx)
+- **File:** `frontend/src/pages/UserLogin.jsx`
 - **Features:**
   - Responsive column layout with top branding and bottom captain switcher.
   - Controlled inputs for **Email** (`email`) and **Password** (`password`) via React `useState`.
@@ -659,7 +661,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 3. User Sign Up Page (`UserSignUp.jsx`)
 
 - **Path:** `/signup`
-- **Component:** [`frontend/src/pages/UserSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserSignUp.jsx)
+- **File:** `frontend/src/pages/UserSignUp.jsx`
 - **Features:**
   - Controlled inputs for `firstName`, `lastName`, `email`, and `password`.
   - **API Integration:** Sends `POST` request to `${VITE_BASE_URL}/users/register` with payload `{ fullname: { firstname, lastname }, email, password }`.
@@ -673,7 +675,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 4. Captain Login Page (`CaptainLogin.jsx`)
 
 - **Path:** `/captain-login`
-- **Component:** [`frontend/src/pages/CaptainLogin.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogin.jsx)
+- **File:** `frontend/src/pages/CaptainLogin.jsx`
 - **Features:**
   - Dedicated captain branding using `Veyro_captain_logo.png`.
   - Controlled inputs for captain **Email** and **Password**.
@@ -688,7 +690,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 5. Captain Sign Up Page (`CaptainSignUp.jsx`)
 
 - **Path:** `/captain-signup`
-- **Component:** [`frontend/src/pages/CaptainSignUp.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainSignUp.jsx)
+- **File:** `frontend/src/pages/CaptainSignUp.jsx`
 - **Features:**
   - Dedicated captain branding (`Veyro_captain_logo.png`).
   - Controlled form inputs for captain personal and vehicle details:
@@ -706,25 +708,44 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 ### 6. User Home Page (`Home.jsx`)
 
 - **Path:** `/home`
-- **Component:** [`frontend/src/pages/Home.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/Home.jsx)
+- **File:** `frontend/src/pages/Home.jsx`
 - **Access:** Protected (`UserProtectWrapper`)
-- **Description:** Main user application dashboard after successful authentication.
+- **Features & Implementation:**
+  - **Full-Screen Map Viewport:** Background cover showcasing the interactive map area (`w-screen h-screen object-cover`).
+  - **Floating Veyro Logo:** Positioned at `top-3 left-4` for branding.
+  - **Interactive "Find a Trip" Search Panel:**
+    - Form inputs for **Pickup location** and **Dropoff location** with custom connector line graphics.
+    - Controlled state for `pickupLocation` and `dropoffLocation`.
+  - **GSAP Animated Sheet Transitions (`useGSAP`):**
+    - Clicking into either location input triggers `setPanelOpen(true)`.
+    - Animates the sliding search results panel (`panelRef`) from `0%` to `70%` height with smooth easing (`duration: 0.2s`, `padding: 27px`).
+    - Animates down-arrow close button (`panelCloseRef`) opacity from `0` to `1`.
+    - Tapping the collapse arrow (`ri-arrow-down-wide-line`) resets `panelOpen` to `false`, smoothly tucking the panel back down.
+  - **Embedded Search Results:** Houses `<LocationSearchPanel />` within the animated drawer container.
 
 ---
 
-### 7. Captain Home Page (`CaptainHome.jsx`)
+### 7. Location Search Panel (`LocationSearchPanel.jsx`)
+
+- **File:** `frontend/src/components/LocationSearchPanel.jsx`
+- **Features:**
+  - Dedicated search suggestions and location search results list rendered inside the expanding bottom sheet on the Home screen.
+
+---
+
+### 8. Captain Home Page (`CaptainHome.jsx`)
 
 - **Path:** `/captain-home`
-- **Component:** [`frontend/src/pages/CaptainHome.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainHome.jsx)
+- **File:** `frontend/src/pages/CaptainHome.jsx`
 - **Access:** Protected (`CaptainProtectWrapper`)
 - **Description:** Main driver dashboard showing active availability and ride requests.
 
 ---
 
-### 8. User Logout Component (`UserLogout.jsx`)
+### 9. User Logout Component (`UserLogout.jsx`)
 
 - **Path:** `/user/logout`
-- **Component:** [`frontend/src/pages/UserLogout.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserLogout.jsx)
+- **File:** `frontend/src/pages/UserLogout.jsx`
 - **Features:**
   - Extracts stored token from `localStorage.getItem("token")`.
   - Calls `GET ${VITE_BASE_URL}/users/logout` with Bearer token authorization header.
@@ -733,10 +754,10 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ---
 
-### 9. Captain Logout Component (`CaptainLogout.jsx`)
+### 10. Captain Logout Component (`CaptainLogout.jsx`)
 
 - **Path:** `/captain/logout`
-- **Component:** [`frontend/src/pages/CaptainLogout.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainLogout.jsx)
+- **File:** `frontend/src/pages/CaptainLogout.jsx`
 - **Features:**
   - Extracts stored token from `localStorage.getItem("token")`.
   - Calls `GET ${VITE_BASE_URL}/captains/logout` with Bearer token authorization header.
@@ -749,7 +770,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ### User Protection Wrapper (`UserProtectWrapper.jsx`)
 
-- **Location:** [`frontend/src/pages/UserProtectWrapper.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/UserProtectWrapper.jsx)
+- **File:** `frontend/src/pages/UserProtectWrapper.jsx`
 - **Purpose:** Higher-order route wrapper that guards user-only routes from unauthenticated access.
 - **Mechanism:**
   - Checks `localStorage.getItem("token")` inside a `useEffect` hook.
@@ -761,7 +782,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ### Captain Protection Wrapper (`CaptainProtectWrapper.jsx`)
 
-- **Location:** [`frontend/src/pages/CaptainProtectWrapper.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/pages/CaptainProtectWrapper.jsx)
+- **File:** `frontend/src/pages/CaptainProtectWrapper.jsx`
 - **Purpose:** Route wrapper guarding driver-only routes (`/captain-home`).
 - **Mechanism:**
   - Checks `localStorage.getItem("token")`.
@@ -775,7 +796,7 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
 
 ### 1. User Context (`UserContext.jsx`)
 
-- **Location:** [`frontend/src/context/UserContext.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/context/UserContext.jsx)
+- **File:** `frontend/src/context/UserContext.jsx`
 - **Provider Component:** `UserContext`
 - **Context Object:** `UserDataContext`
 - **Initial State:**
@@ -789,13 +810,13 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
   });
   ```
 - **Context Value:** `{ user, setUser }`
-- **Application Integration:** Wraps `<BrowserRouter>` and `<App />` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to make user state globally accessible.
+- **Application Integration:** Wraps `<BrowserRouter>` and `<App />` in `frontend/src/main.jsx` to make user state globally accessible.
 
 ---
 
 ### 2. Captain Context (`CaptainContext.jsx`)
 
-- **Location:** [`frontend/src/context/CaptainContext.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/context/CaptainContext.jsx)
+- **File:** `frontend/src/context/CaptainContext.jsx`
 - **Provider Component:** `CaptainContext`
 - **Context Object:** `CaptainDataContext`
 - **State Provided:**
@@ -804,4 +825,4 @@ Routing is configured in [`frontend/src/App.jsx`](file:///Users/Shared/Files%20F
   - `isLoading` / `setIsLoading`
   - `error` / `setError`
   - `updateCaptain`
-- **Application Integration:** Nested inside `UserContext` in [`frontend/src/main.jsx`](file:///Users/Shared/Files%20From%20d.localized/MERN_Projects/Uber%20clone%20/veyro/frontend/src/main.jsx) to provide global driver state throughout the application.
+- **Application Integration:** Nested inside `UserContext` in `frontend/src/main.jsx` to provide global driver state throughout the application.
