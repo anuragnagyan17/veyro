@@ -728,8 +728,10 @@ Routing is configured in `frontend/src/App.jsx` wrapped inside `<BrowserRouter>`
 ### 7. Location Search Panel (`LocationSearchPanel.jsx`)
 
 - **File:** `frontend/src/components/LocationSearchPanel.jsx`
-- **Features:**
-  - Dedicated search suggestions and location search results list rendered inside the expanding bottom sheet on the Home screen.
+- **Features & Implementation:**
+  - **Dynamic Location List:** Renders an array of sample/suggested pickup and dropoff destinations using JavaScript `.map()`.
+  - **Map Pin Iconography:** Stylized Remix Icon map marker (`ri-map-pin-fill`) encapsulated in a circular background (`rounded-full bg-[#eeeeee]`).
+  - **Interactive Selection Cards:** Each location option is formatted as a responsive card with rounded corners (`rounded-xl`), custom border states (`border-gray-50 active:border-black`), and flex layout for quick destination selection.
 
 ---
 
