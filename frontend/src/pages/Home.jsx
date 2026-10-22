@@ -10,8 +10,10 @@ const Home = () => {
   const [pickupLocation, setPickupLocation] = useState("");
   const [dropoffLocation, setDropoffLocation] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
+  const vehiclePanelRef = useRef(null);
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
+  const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -44,6 +46,18 @@ const Home = () => {
     },
     [panelOpen],
   );
+
+  useGSAP(() => {
+    if (vehiclePanelOpen) {
+      gsap.to(vehiclePanelRef.current, {
+        transform: "translateY(0)",
+      });
+    } else {
+      gsap.to(vehiclePanelRef.current, {
+        transform: "translateY(100%)",
+      });
+    }
+  }, [vehiclePanelOpen]);
 
   return (
     <div className="h-screen relative overflow-hidden">
@@ -102,11 +116,17 @@ const Home = () => {
           </form>
         </div>
         <div ref={panelRef} className="bg-white h-0 ">
-          <LocationSearchPanel />
+          <LocationSearchPanel
+            setPanalOpen={setPanelOpen}
+            setVehiclePanelOpen={setVehiclePanelOpen}
+          />
         </div>
       </div>
 
-      <div className="fixed w-full z-10 bottom-0 px-3 py-8 translate-y-full bg-white">
+      <div
+        ref={vehiclePanelRef}
+        className="fixed w-full z-10 bottom-0 px-3 py-8 translate-y-full bg-white"
+      >
         <h3 className="font-semibold mb-5 text-2xl">Choose a vehicle</h3>
         <div className="flex p-3 border-2 mb-2 active:border-black rounded-xl w-full items-center justify-between">
           <img

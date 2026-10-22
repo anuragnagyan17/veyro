@@ -716,12 +716,21 @@ Routing is configured in `frontend/src/App.jsx` wrapped inside `<BrowserRouter>`
   - **Interactive "Find a Trip" Search Panel:**
     - Form inputs for **Pickup location** and **Dropoff location** with custom connector line graphics.
     - Controlled state for `pickupLocation` and `dropoffLocation`.
-  - **GSAP Animated Sheet Transitions (`useGSAP`):**
+  - **GSAP Animated Search Drawer (`useGSAP`):**
     - Clicking into either location input triggers `setPanelOpen(true)`.
     - Animates the sliding search results panel (`panelRef`) from `0%` to `70%` height with smooth easing (`duration: 0.2s`, `padding: 27px`).
     - Animates down-arrow close button (`panelCloseRef`) opacity from `0` to `1`.
     - Tapping the collapse arrow (`ri-arrow-down-wide-line`) resets `panelOpen` to `false`, smoothly tucking the panel back down.
-  - **Embedded Search Results:** Houses `<LocationSearchPanel />` within the animated drawer container.
+  - **Embedded Search Results:** Houses `<LocationSearchPanel />` with state handlers `setPanelOpen` and `setVehiclePanelOpen`.
+  - **Animated "Choose a Vehicle" Bottom Sheet (`vehiclePanelRef`):**
+    - Sliding drawer fixed at the bottom (`z-10 bottom-0`) animated using GSAP transforms (`translateY(0)` when open, `translateY(100%)` when closed).
+    - Triggered upon selecting any suggested location from `LocationSearchPanel`.
+    - Offers 4 ride tiers with real-time imagery, passenger capacity icons (`ri-user-3-fill`), arrival ETAs, and pricing:
+      1. **VeyroGO** (4 seats, 2 mins away, $193)
+      2. **SedanGO** (4 seats, 5 mins away, $250)
+      3. **MotoGO** (1 seat, 15 mins away, $115)
+      4. **AutoGO** (2 seats, 10 mins away, $80)
+    - Active border selection state (`active:border-black`) on each vehicle card.
 
 ---
 
@@ -732,6 +741,9 @@ Routing is configured in `frontend/src/App.jsx` wrapped inside `<BrowserRouter>`
   - **Dynamic Location List:** Renders an array of sample/suggested pickup and dropoff destinations using JavaScript `.map()`.
   - **Map Pin Iconography:** Stylized Remix Icon map marker (`ri-map-pin-fill`) encapsulated in a circular background (`rounded-full bg-[#eeeeee]`).
   - **Interactive Selection Cards:** Each location option is formatted as a responsive card with rounded corners (`rounded-xl`), custom border states (`border-gray-50 active:border-black`), and flex layout for quick destination selection.
+  - **Ride Selection Flow Trigger:** Clicking any location triggers:
+    1. Closes the search suggestions panel (`props.setPanalOpen(false)`).
+    2. Slides up the vehicle selection sheet (`props.setVehiclePanelOpen(true)`).
 
 ---
 
